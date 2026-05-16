@@ -45,7 +45,7 @@ df = pd.read_csv(r"AI_Student_Life_Pakistan_2026.csv")
 with st.expander('Dataset'):
     df
 
-col11 , col12 = st.columns([1,2])
+col11 , col12 = st.columns(2)
 
 with col11 :
     st.header("Análisis de Impacto")
@@ -75,10 +75,34 @@ with col11 :
     plt.ylabel("Cantidad de estudiantes") 
 
     st.pyplot(plt) #Para que muestre la grafica, si no solo existe, pero no aparece
+    #Este es pa q suspenda la otra grafica y no me encime las graficas entre sis por q si no se bugea
+    plt.close()
 
 #Listo ahora va 2do commit (o primer commit de modificaciones al code)
-    
 
+with col12 :
+    st.header("Comparativa de Propositos")
+     #Igual hacemos lo mismo, pero ahora nos pide st.radio que nos ayudara a seleccionar los usos que les dan que queremos ver para poder compara entre estos
+    #Le pido que de la instruccion y que me de las opciones para las compatarivas
+    prop_opc = st.radio("Selecciona un propósito:", ["Coding", "Writing", "Research", "Learning", "Homework"])
+    #Fragmentamos el df para que solo nos de la col de proposito y que unicamente tome los valores de la opcion que seleccionemos
+    df_2 = df[df["Purpose"] == prop_opc]
+    #Aca hacemos un conteo, de el impacto en las notas (+, - o nada) en base al df fragmentadi
+    conteo_prop = df_2["Impact_on_Grades"].value_counts()
+
+    #Y eso lo graficamos
+    
+    fig, ax = plt.subplots()
+
+    ax.bar(conteo_prop.index, conteo_prop.values, color=["steelblue", "orange", "tomato"], edgecolor="white")
+    ax.set_title(f"Impacto en Notas — {prop_opc}")
+    ax.set_xlabel("Impacto")
+    ax.set_ylabel("Cantidad de estudiantes")
+    plt.tight_layout()
+
+    st.pyplot(fig)
+    plt.close()
+#Ahora va el 2do commit
 
 
     
