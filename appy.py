@@ -1,5 +1,6 @@
 #Inicie cargando streamlit desde la terminal de vs (no sabia que tenia una) y ahora la importo
 import streamlit as st
+import plotly.express as px
 from PIL import Image
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -69,17 +70,20 @@ with col11 :
     anli_IAC = anli_IAC.unstack()
 
     # Graficamos
-    #Esto es para pedirle que ponga las graficas apiladas y no por separado
-    anli_IAC.plot(kind="bar", stacked=True)
-    plt.xlabel("Herramienta")
-    plt.ylabel("Cantidad de estudiantes") 
+    #Cambie las graficas a estas, 
+    #Aca le decimos cual es la info que graficara y cual tipo sera
+    fig = px.bar(anli_IAC, 
+             #Aca le pedimos que apile las graficas   
+             barmode="stack",
+             #Su titulo 
+             title="Impacto en Notas por Herramienta",
+             #Le pone nombres a los ejes
+             labels={"value": "Cantidad de estudiantes", "AI_Tool_Used": "Herramienta"})
 
-    st.pyplot(plt) #Para que muestre la grafica, si no solo existe, pero no aparece
-    #Este es pa q suspenda la otra grafica y no me encime las graficas entre sis por q si no se bugea
-    plt.close()
+    st.plotly_chart(fig, use_container_width=True)
 
 #Listo ahora va 2do commit (o primer commit de modificaciones al code)
-
+#parte 2
 with col12 :
     st.header("Comparativa de Propositos")
      #Igual hacemos lo mismo, pero ahora nos pide st.radio que nos ayudara a seleccionar los usos que les dan que queremos ver para poder compara entre estos
@@ -92,20 +96,40 @@ with col12 :
 
     #Y eso lo graficamos
     
-    fig, ax = plt.subplots()
+    fig = px.bar(conteo_prop,
+             title=f"Impacto en Notas — {prop_opc}",
+             labels={"value": "Cantidad de estudiantes", "index": "Impacto"})
 
-    ax.bar(conteo_prop.index, conteo_prop.values, color=["steelblue", "orange", "tomato"], edgecolor="white")
-    ax.set_title(f"Impacto en Notas — {prop_opc}")
-    ax.set_xlabel("Impacto")
-    ax.set_ylabel("Cantidad de estudiantes")
-    plt.tight_layout()
-
-    st.pyplot(fig)
-    plt.close()
-#Ahora va el 2do commit
+    st.plotly_chart(fig, use_container_width=True)
+#Ahora va el 2do commit Nota, accidentalmente a la hora de subirlo a mi tukey le di enter con la misma descripcion al comit :,c asi q saldra lo mismo
 
 
-    
+#Parte 3
+#Nota cambie mis graficas a la libreria de streamlit por q son mas dinamicas
+
+st.header("Analisis de Anomalias")
+#Esto es para el deslizador , le ponemos el titulo o mas bien indicacion 
+#La variable es para usarla en el filtro de mas tarde
+horas = st.slider("Filtra por horas de uso diario:",
+                  #El minimo para el deslizador tomamos flotantes (por q algunas horas las toma en decimales) 
+                  min_value=float(df["Daily_Usage_Hours"].min()), 
+                                    #Tomamos del df la columna de Daily_Usage_Hours sacandole el minimo para que ese sea nuestro minimo del deslizador
+                  max_value=float(df["Daily_Usage_Hours"].max()),
+                            #Igual con este pero este sera para el maximo 
+                  value=float(df["Daily_Usage_Hours"].mean()))
+                    #Este es para el primer valor que veremos al iniciar el programa, que en este caso lo quise poner en medio
+
+#esro lo recicle para obtener el df en la parte que nos intereza que es que el nivel de satisfaccion sea alto y que el impacto en las notas sea bajo
+Pareducir3 = (df['Satisfaction_Level'] == 'High') & (df['Impact_on_Grades'] == 'Slight Decline') & (df['Daily_Usage_Hours'] <= horas)
+dfsat_dec = df[Pareducir3]   #Gruardamos eso en una variable                                      #Ese es para el filtro que añaciremos ya que debe contar solo los que tengan horas menores o iguales a las que determinara nuestro deslizador
+
+#Esto es para que escriba en el dashboard cuantos estudiantes son los que cumplen con los filtros
+st.write(f"Total de estudiantes: {len(dfsat_dec)}")#el f va por que dentro de nuestro texto va a llevar una funcion o codigo a ejecutar
+                                #Y le pedimos que cuente desde nuestro df de satisfaccion que estara ya filtrado
+#esto es para que muestre el data frame, pero solo mostrara nivel de satisfaccion, imacto e ia usada ya que los demas datos sobran para lo solicitado
+st.dataframe(dfsat_dec[['Satisfaction_Level', 'Impact_on_Grades', 'AI_Tool_Used', 'Daily_Usage_Hours']], use_container_width=True)
+
+#Listo va otro commit
 
 
 
