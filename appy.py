@@ -176,7 +176,42 @@ with col41 :
     
 #Listo va nuestro penultimo commit
 
+#listo la ultima parte
+with col52 :
+    st.header("Rendimiento Regional ")
+    #de aca sacamos las op de ciudad aplicando un unique para las ciudades unicas y hago una lista con tolist ya que el multiselect solo funciona con listas
+    ciudades_ops = df["City"].unique().tolist()
+    #Aca aplicamos el multiselect y le ponemos una variable para poder determinar que poner en cada opc
+    ciudades_sel = st.multiselect("Selecciona ciudades para comparar:", 
+                                ciudades_ops, 
+                                default=ciudades_ops)
 
+    if ciudades_sel:
+        #Aca si hay algo seleccionado en nuestra variable del multiseclect
+        #hacemos un df filtrando la columna ciudad que sea la del selector
+        df_5 = df[df["City"].isin(ciudades_sel)]
+        
+        #para el total de estudiantes tomando en cuenta las col de ciudad e impacto en notas
+        total_ciudad = df_5.groupby("City")["Impact_on_Grades"].count()
+        #Aca compara nuestro df para contar las notas mejoradas, si si estan mejoradas aplica un groupby y cuentasolo los que mejoraron
+        mejora_ciudad = df_5[df_5["Impact_on_Grades"] == "Improved"].groupby("City")["Impact_on_Grades"].count()
+        #Para sacar el porcentaje de mejora
+        porCity = (mejora_ciudad / total_ciudad * 100).round(2).reset_index()#Igual para graficar hacemos unreset para hacerlo columna
+
+        #Le ponemos nombres a las graficas para qye se vean bonitas
+        porCity.columns = ["City", "% Notas Mejoradas"]
+        #graficamos
+        fig = px.bar(porCity, x="City", y="% Notas Mejoradas",
+                    title="% de Notas Mejoradas por Ciudad",
+                    labels={"City": "Ciudad"},
+                    range_y=[0, 100])
+
+        st.plotly_chart(fig, use_container_width=True)
+
+    else:
+        st.write("Selecciona al menos una ciudad para ver la gráfica")
+
+#Listooooooo el ultimo commit
 
 
 
