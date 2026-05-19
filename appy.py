@@ -63,11 +63,15 @@ with col11 :
     else: #Sino hara un filtrado por ciudad, en base a la opcion elegida
         df_1 = df[df["City"] == ciudad_sel]
 
-    # Filtramos el df pidiendo que nos agrupe en grupos las columnas de tool used y impact on grades y que nos de sus tamaños
-    anli_IAC = df_1.groupby(["AI_Tool_Used", "Impact_on_Grades"]).size()
+    # Filtramos el df pidiendo que nos agrupe en grupos las columnas de tool used y impact on grades pido que cuente los valores y que normalice que es lo que me falto
+    anli_IAC = df_1.groupby("AI_Tool_Used")["Impact_on_Grades"].value_counts(normalize=True)
 
     # Las convertimos en columnas para la grafica
     anli_IAC = anli_IAC.unstack()
+
+    #Falto normalizar
+    #Listo, solo cambie de 
+    #ali_IAC = df_1.groupby(["AI_Tool_Used", "Impact_on_Grades"]).size() a anli_IAC = df_1.groupby("AI_Tool_Used")["Impact_on_Grades"].value_counts(normalize=True) eso
 
     # Graficamos
     #Cambie las graficas a estas, 
@@ -130,6 +134,52 @@ st.write(f"Total de estudiantes: {len(dfsat_dec)}")#el f va por que dentro de nu
 st.dataframe(dfsat_dec[['Satisfaction_Level', 'Impact_on_Grades', 'AI_Tool_Used', 'Daily_Usage_Hours']], use_container_width=True)
 
 #Listo va otro commit
+
+#Parte 4
+col41 , col52 = st.columns(2)
+with col41 :
+    st.header("Demografia y Uso")
+
+    #Estos son los checkbox, en estos decimos que marcara al darle click
+    por_genero = st.checkbox("Desglosar por Género")
+    por_nivel = st.checkbox("Desglosar por Nivel Educativo")
+    #Hacemos variables de los checkbox para luego usarlas en la particion del df
+
+    #esto es para que se vea la grafica unicamente si se eligio una opc
+    if por_genero or por_nivel:
+    # Decides el groupby según los checkboxes
+        if por_genero and por_nivel:
+            #si se escojen las 2 a la vex entondes se toman las 2 columnas
+            grupo = ["Gender", "Education_Level"]
+        elif por_genero:
+            #Si solo es por genero solo tomamos esa columna
+            grupo = ["Gender"]
+        elif por_nivel:
+            #Si es por nivel ed, solo tomamos esa
+            grupo = ["Education_Level"]
+        #Aca hacemos otro df que agrupe las variables de grupo (que estan en el if para guardar lo que de eligio)
+        df_4 = df.groupby(grupo)["Daily_Usage_Hours"].mean().reset_index()
+                                #De ese grupo toma la col de horas de uso, calcula su promedio con .mean y asi mismo convierte el resultado en col con reset_index ya que al hacerlos sin eso nos marca error por manejar un indice para graficar
+        #Graficamos
+        fig = px.bar(df_4, 
+            #Aqui es para cambiarle los colores por grupo ya que si no no se notan en la grafica
+             x=grupo[0], #Toma el 1er grupo de lo solicitado
+             y="Daily_Usage_Hours",#en el eje y tenemos uso de horas
+             color=grupo[-1],#Para cambiar el color en caso de que sean genero y nivel ed, tambien lo cambia en genero y nivel
+             title="Promedio de Horas de Uso",
+             labels={"Daily_Usage_Hours": "Horas promedio"})
+        st.plotly_chart(fig, use_container_width=True)
+
+    #esto es para que si no tenemos seleccionado nada no muestre grafica 
+    else:
+        st.write("Seleccione al menos una opcion para ver la grafica ")
+    
+#Listo va nuestro penultimo commit
+
+
+
+
+
 
 
 
