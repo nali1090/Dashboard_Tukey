@@ -211,9 +211,28 @@ with col52 :
     else:
         st.write("Selecciona al menos una ciudad para ver la gráfica")
 
-#Listooooooo el ultimo commit
+#Listooooooo el ultimo commit del proyecto
 
 
+
+st.header("Descubrimientos Clave")
+
+with st.expander("Mis descubrimientos"):
+    st.markdown("""
+    **Descubrimientos**
+    1. Al hacer la comparativa de propositos podemos notar que al usarse la IA para investigacion, esta
+       da los mismos resultados para la mejora de las notas, que no cambien o que decaigan, esto nos indicaria 
+       que puede que la IA sea regular para las consultas mientras que lo que menos se le da seria la resolucion
+       de las tareas, que aunque no te baja la nota tampoco ayuda mucho,pasa lo mismo al usarla para escribir 
+       y en los demas campos como code y learning ayuda mucho a los estudiantes a mejorar
+    2. Al analizar las nomalias note que si bien son pocos estudiantes, se presenta el caso de una alta satisfaccion
+       al usar la IA pero sin ningun resultado positivo en las notas, siendo que estas al contrario estan en declive lo cual nos da una rara contradiccion
+       ante los echos y las opiniones de estos 8 estudiantes
+    3. Al analizar la demografia noto que los hombres suelen usar mas la inteligencia que las mujeres, asi mismo veo que dependiendo el nivel educativo 
+       es que tanto se usa, aunque solo por poco el nivel ed que mas tiende a usarla es el colegio, siendo que al contrario en un colegio 
+       quienes mas usan la IA son las mujeres, pero en el resto de los niveles los hombres son los que mas usan esta herramienta.
+                
+    """)
 
 
 
